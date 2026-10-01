@@ -1,0 +1,7 @@
+option,value,allowed_values,description
+flexible_heat_mode,final_energy_demand,final_energy_demand|heat_demand,Keep central district-heat carrier inputs in final energy demand or export useful-heat demand
+industrial_heat_mode,final_energy_demand,final_energy_demand|heat_demand,Keep industrial heat carrier inputs in demand or export useful-heat demand
+agriculture_heat_mode,final_energy_demand,final_energy_demand|heat_demand,Keep agriculture heat carrier inputs in demand or export useful-heat demand
+dsr_mode,final_electricity_demand,final_electricity_demand|dsr,Keep DSR in the electricity profile or export it as flexible demand
+add_network_losses_to_demand,true,true|false,Add audited electricity network losses to exogenous demand instead of representing them on network flows
+add_power_sector_own_use_to_demand,true,true|false,Add power-sector own electricity use to exogenous demand

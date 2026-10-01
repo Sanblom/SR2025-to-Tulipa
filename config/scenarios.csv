@@ -1,0 +1,18 @@
+scenario_key,scenario_name,year,saved_scenario_id,model_version,engine_base_url,enabled
+koersvaste_middenweg,Koersvaste Middenweg,2025,19912,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+koersvaste_middenweg,Koersvaste Middenweg,2030,19916,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+koersvaste_middenweg,Koersvaste Middenweg,2035,19917,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+koersvaste_middenweg,Koersvaste Middenweg,2040,19918,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+koersvaste_middenweg,Koersvaste Middenweg,2050,19919,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+eigen_vermogen,Eigen Vermogen,2030,19921,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+eigen_vermogen,Eigen Vermogen,2035,19922,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+eigen_vermogen,Eigen Vermogen,2040,19923,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+eigen_vermogen,Eigen Vermogen,2050,19924,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+gezamenlijke_balans,Gezamenlijke Balans,2030,19925,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+gezamenlijke_balans,Gezamenlijke Balans,2035,19926,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+gezamenlijke_balans,Gezamenlijke Balans,2040,19927,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+gezamenlijke_balans,Gezamenlijke Balans,2050,19928,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+horizon_aanvoer,Horizon Aanvoer,2030,19929,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+horizon_aanvoer,Horizon Aanvoer,2035,19930,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+horizon_aanvoer,Horizon Aanvoer,2040,19931,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true
+horizon_aanvoer,Horizon Aanvoer,2050,19932,2025.01,https://2025-01.engine.energytransitionmodel.com/api/v3,true

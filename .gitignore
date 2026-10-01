@@ -1,0 +1,17 @@
+# Local Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+~$*.xlsx
+
+# Credentials and local settings
+.env
+
+# Downloaded source data and generated artifacts
+data/raw/
+data/cache/
+output/
+tulipa_input_*/
+tulipa_output_*/

@@ -1,0 +1,10 @@
+route,supply_group,resource,technology,included,reason
+greengas_gasification_dry_biomass,renewable_methane,biomass,gasification,true,Group biomass gasification and biogas upgrading
+greengas_gasification_wet_biomass,renewable_methane,biomass,gasification,true,Group biomass gasification and biogas upgrading
+greengas_upgrade_biogas,renewable_methane,biogas,upgrading,true,Group biomass gasification and biogas upgrading
+industry_transformation,industry_transformation,network_gas,transformation,false,Disregard industry transformation as methane supply asset
+lng_regasification,lng_regasification,lng,regasification,true,Preserve inactive source route
+natural_gas_extraction,natural_gas_extraction,natural_gas,extraction,true,Keep extraction separate
+natural_gas_import,natural_gas_import,natural_gas,direct_import,true,Keep import separate
+propane_import,propane_import,propane,direct_import,true,Preserve inactive source route
+network_gas_storage,network_gas_storage,network_gas,storage,true,Keep storage separate from supply

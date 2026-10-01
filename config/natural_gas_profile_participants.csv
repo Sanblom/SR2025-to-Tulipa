@@ -1,0 +1,72 @@
+participant,sector,category,inclusion_mode,reason
+agriculture_burner_network_gas.input (MW),agriculture,heat,agriculture_heat,Agriculture end-use heat
+agriculture_chp_engine_network_gas_dispatchable.input (MW),agriculture,chp,never,CHP is an endogenous conversion asset
+agriculture_chp_engine_network_gas_must_run.input (MW),agriculture,chp,never,CHP is an endogenous conversion asset
+agriculture_heat_backup_burner_network_gas.input (MW),agriculture,heat,never,Dynamic backup duplicates annual agriculture heat demand
+buildings_appliances_network_gas.input (MW),buildings,appliances,always,Building end use
+buildings_cooling_heatpump_air_water_network_gas.input (MW),buildings,cooling,always,Residential and service heat remains final demand
+buildings_space_heater_heatpump_air_water_network_gas.input (MW),buildings,space_heating,always,Residential and service heat remains final demand
+buildings_space_heater_hybrid_heatpump_air_water_electricity.input (MW),buildings,space_heating,always,Residential and service heat remains final demand
+buildings_space_heater_network_gas.input (MW),buildings,space_heating,always,Residential and service heat remains final demand
+energy_chemical_fertilizers_transformation_external_coupling_node.input (MW),energy,transformation,always,Transformation output is not represented by a Tulipa conversion asset
+energy_chemical_other_transformation_external_coupling_node.input (MW),energy,transformation,always,Transformation output is not represented by a Tulipa conversion asset
+energy_chemical_refineries_transformation_external_coupling_node.input (MW),energy,transformation,always,Transformation output is not represented by a Tulipa conversion asset
+energy_chp_combined_cycle_ht_network_gas.input (MW),energy,chp,never,Central CHP is an endogenous conversion asset
+energy_chp_combined_cycle_mt_network_gas.input (MW),energy,chp,never,Central CHP is an endogenous conversion asset
+energy_chp_local_engine_ht_network_gas.input (MW),energy,chp,never,Central CHP is an endogenous conversion asset
+energy_chp_local_engine_mt_network_gas.input (MW),energy,chp,never,Central CHP is an endogenous conversion asset
+energy_compressor_network_gas.input (MW),transport,compressed_gas,always,Gas delivered to transport through compression
+energy_distribution_network_gas_loss.input (MW),energy,losses,network_losses,Include network-gas losses as explicit methane demand
+energy_export_greengas_backup.input (MW),energy,exports,never,Exports are not domestic demand
+energy_export_greengas_baseload.input (MW),energy,exports,never,Exports are not domestic demand
+energy_export_natural_gas_backup.input (MW),energy,exports,never,Exports are not domestic demand
+energy_export_natural_gas_baseload.input (MW),energy,exports,never,Exports are not domestic demand
+energy_heat_backup_burner_ht_network_gas.input (MW),energy,central_heat,flexible_heat,Central district-heat production
+energy_heat_backup_burner_lt_network_gas.input (MW),energy,central_heat,flexible_heat,Central district-heat production
+energy_heat_backup_burner_mt_network_gas.input (MW),energy,central_heat,flexible_heat,Central district-heat production
+energy_heat_burner_ht_network_gas.input (MW),energy,central_heat,flexible_heat,Central district-heat production
+energy_heat_burner_mt_network_gas.input (MW),energy,central_heat,flexible_heat,Central district-heat production
+energy_hydrogen_autothermal_reformer_ccs_must_run.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_autothermal_reformer_dispatchable.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_autothermal_reformer_must_run.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_biomass_gasification.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_biomass_gasification_ccs.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_steam_methane_reformer_ccs_must_run.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_steam_methane_reformer_dispatchable.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_hydrogen_steam_methane_reformer_must_run.input (MW),energy,hydrogen_production,never,Hydrogen production is endogenous
+energy_network_gas_storage.input (MW),energy,storage,never,Storage charging is endogenous
+energy_power_combined_cycle_ccs_network_gas.input (MW),energy,electricity_production,never,Electricity production is endogenous
+energy_power_combined_cycle_network_gas.input (MW),energy,electricity_production,never,Electricity production is endogenous
+energy_power_engine_network_gas.input (MW),energy,electricity_production,never,Electricity production is endogenous
+energy_power_turbine_network_gas.input (MW),energy,electricity_production,never,Electricity production is endogenous
+energy_power_ultra_supercritical_network_gas.input (MW),energy,electricity_production,never,Electricity production is endogenous
+energy_torrefaction_wood.input (MW),energy,transformation,always,Transformation output is not represented by a Tulipa conversion asset
+energy_treatment_natural_gas_loss.input (MW),energy,losses,network_losses,Include network-gas losses as explicit methane demand
+households_cooker_network_gas.input (MW),households,cooking,always,Residential heat remains final demand
+households_space_heater_combined_network_gas.input (MW),households,space_heating,always,Residential heat remains final demand
+households_space_heater_hybrid_heatpump_air_water_electricity.input (MW),households,space_heating,always,Residential heat remains final demand
+households_space_heater_network_gas.input (MW),households,space_heating,always,Residential heat remains final demand
+households_water_heater_combined_network_gas.input (MW),households,hot_water,always,Residential heat remains final demand
+households_water_heater_hybrid_heatpump_air_water_electricity.input (MW),households,hot_water,always,Residential heat remains final demand
+households_water_heater_network_gas.input (MW),households,hot_water,always,Residential heat remains final demand
+industry_chemicals_fertilizers_burner_network_gas.input (MW),industry,process_heat,industrial_heat,Industrial heat
+industry_chemicals_other_burner_network_gas.input (MW),industry,process_heat,industrial_heat,Industrial heat
+industry_chemicals_refineries_burner_network_gas.input (MW),industry,process_heat,industrial_heat,Industrial heat
+industry_chp_combined_cycle_gas_power_fuelmix.input (MW),industry,chp,never,CHP is an endogenous conversion asset
+industry_chp_engine_gas_power_fuelmix.input (MW),industry,chp,never,CHP is an endogenous conversion asset
+industry_chp_turbine_gas_power_fuelmix.input (MW),industry,chp,never,CHP is an endogenous conversion asset
+industry_final_demand_for_chemical_fertilizers_network_gas_non_energetic.input (MW),industry,non_energetic,always,Industrial feedstock demand
+industry_final_demand_for_chemical_other_network_gas_non_energetic.input (MW),industry,non_energetic,always,Industrial feedstock demand
+industry_final_demand_for_chemical_refineries_network_gas_non_energetic.input (MW),industry,non_energetic,always,Industrial feedstock demand
+industry_final_demand_for_metal_aluminium_network_gas.input (MW),industry,direct_process,always,Direct industrial demand
+industry_final_demand_for_metal_other_metals_network_gas.input (MW),industry,direct_process,always,Direct industrial demand
+industry_final_demand_for_metal_steel_network_gas.input (MW),industry,direct_process,always,Direct industrial demand
+industry_final_demand_for_other_non_specified_network_gas.input (MW),industry,direct_process,always,Direct industrial demand
+industry_final_demand_for_other_non_specified_network_gas_non_energetic.input (MW),industry,non_energetic,always,Industrial feedstock demand
+industry_heat_backup_burner_network_gas.input (MW),industry,process_heat,never,Dynamic backup duplicates annual industrial heat demand
+industry_heat_combined_cycle_gas_power_fuelmix.input (MW),industry,process_heat,never,Conversion curve duplicates annual industrial heat demand
+industry_heat_engine_gas_power_fuelmix.input (MW),industry,process_heat,never,Conversion curve duplicates annual industrial heat demand
+industry_heat_turbine_gas_power_fuelmix.input (MW),industry,process_heat,never,Conversion curve duplicates annual industrial heat demand
+industry_other_food_burner_network_gas.input (MW),industry,process_heat,industrial_heat,Industrial heat
+industry_other_paper_burner_network_gas.input (MW),industry,process_heat,industrial_heat,Industrial heat
+other_final_demand_network_gas.input (MW),other,direct_demand,always,Other final demand

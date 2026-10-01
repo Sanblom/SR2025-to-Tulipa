@@ -1,0 +1,4 @@
+municipality_code,municipality_name,province,node,reason
+GM1980,Dijk en Waard,noordholland,E-BVW,Post-merger municipality missing from the source mapping workbook
+GM1991,Maashorst,noordbrabant,E-EHV,Post-merger municipality missing from the source mapping workbook
+GM1992,Voorne aan Zee,zuidholland,E-MVL,Post-merger municipality missing from the source mapping workbook
