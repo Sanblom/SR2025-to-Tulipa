@@ -1,6 +1,6 @@
 from sr2025_to_tulipa.config import ProfileQuerySpec
 from sr2025_to_tulipa.etm_client import GQueryResponse
-from sr2025_to_tulipa.profile_audit import (
+from sr2025_to_tulipa.profile_collection import (
     HOURS_PER_YEAR,
     MWH_TO_PJ,
     _profile_value_rows,
@@ -69,7 +69,7 @@ def test_profile_components_are_added_and_reconciled() -> None:
 
 
 def test_profile_reconciliation_exposes_mismatched_integral() -> None:
-    """A curve with the wrong annual integral remains a review finding."""
+    """A curve with the wrong annual integral remains visible to normalization."""
     queries = [_query("total", "curve")]
     response = GQueryResponse(
         values={

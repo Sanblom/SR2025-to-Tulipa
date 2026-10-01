@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import csv
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -1620,15 +1619,15 @@ def export_case(
     trading_capacities_input: Path = Path(
         "source_data/i_elgas/Electricity Trading Capacities I-ELGAS.xlsx"
     ),
-    scenario_inventory_input: Path = Path("output/audit/scenario_inventory.csv"),
+    scenario_inventory_input: Path = Path("output/data/scenario_inventory.csv"),
     electricity_aggregation_input: Path = Path(
         "config/electricity_capacity_aggregation.csv"
     ),
     tyndp_root: Path = Path("../TYNDP-26-to-Tulipa"),
     hydrogen_capacity_scan_input: Path = Path(
-        "output/audit/hydrogen_capacity_all_scenarios.csv"
+        "output/data/hydrogen_capacity.csv"
     ),
-    methane_supply_input: Path = Path("output/audit/methane_supply_grouped.csv"),
+    methane_supply_input: Path = Path("output/data/methane_supply_grouped.csv"),
     electricity_demand_input: Path = Path(
         "output/regionalisation/electricity_demand_node_hourly.csv"
     ),
@@ -1873,95 +1872,3 @@ def export_case(
         encoding="utf-8",
     )
     return output_dir
-
-
-def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Generate Tulipa node and coupled conversion-asset tables from cached outputs."
-    )
-    parser.add_argument("scenario_key", choices=tuple(SCENARIO_NAMES))
-    parser.add_argument("year", type=int)
-    parser.add_argument(
-        "--electricity-input",
-        type=Path,
-        default=Path("output/regionalisation/electricity_capacity_by_node.csv"),
-    )
-    parser.add_argument(
-        "--hydrogen-input",
-        type=Path,
-        default=Path("output/audit/hydrogen_capacity_grouped.csv"),
-    )
-    parser.add_argument(
-        "--methane-supply-input",
-        type=Path,
-        default=Path("output/audit/methane_supply_grouped.csv"),
-    )
-    parser.add_argument(
-        "--electricity-demand-input",
-        type=Path,
-        default=Path("output/regionalisation/electricity_demand_node_hourly.csv"),
-    )
-    parser.add_argument(
-        "--grouped-demand-input",
-        type=Path,
-        default=Path("output/profiles/demand_hourly.csv"),
-    )
-    parser.add_argument(
-        "--i-elgas-technology-data-input",
-        type=Path,
-        default=Path("source_data/i_elgas/I-ELGAS_Technology_Data.csv"),
-    )
-    parser.add_argument(
-        "--regional-dir", type=Path, default=Path("source_data/regionalisation")
-    )
-    parser.add_argument(
-        "--trading-capacities-input",
-        type=Path,
-        default=Path(
-            "source_data/i_elgas/Electricity Trading Capacities I-ELGAS.xlsx"
-        ),
-    )
-    parser.add_argument("--output-root", type=Path, default=Path("output/tulipa"))
-    parser.add_argument(
-        "--scenario-inventory-input",
-        type=Path,
-        default=Path("output/audit/scenario_inventory.csv"),
-    )
-    parser.add_argument(
-        "--electricity-aggregation-input",
-        type=Path,
-        default=Path("config/electricity_capacity_aggregation.csv"),
-    )
-    parser.add_argument(
-        "--tyndp-root",
-        type=Path,
-        default=Path("../TYNDP-26-to-Tulipa"),
-    )
-    parser.add_argument(
-        "--renewable-profile-input",
-        type=Path,
-        help="Exact TYNDP dispatch folder supplying Dutch VRE profiles.",
-    )
-    args = parser.parse_args()
-    output_dir = export_case(
-        args.scenario_key,
-        args.year,
-        args.electricity_input,
-        args.hydrogen_input,
-        args.regional_dir,
-        args.output_root,
-        args.trading_capacities_input,
-        args.scenario_inventory_input,
-        electricity_aggregation_input=args.electricity_aggregation_input,
-        tyndp_root=args.tyndp_root,
-        renewable_profile_input=args.renewable_profile_input,
-        methane_supply_input=args.methane_supply_input,
-        electricity_demand_input=args.electricity_demand_input,
-        grouped_demand_input=args.grouped_demand_input,
-        i_elgas_technology_data_input=args.i_elgas_technology_data_input,
-    )
-    print(f"Created Tulipa asset and flow tables in {output_dir}.")
-
-
-if __name__ == "__main__":
-    main()

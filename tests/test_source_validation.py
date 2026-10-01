@@ -43,6 +43,6 @@ def test_changed_year_stops_inventory() -> None:
 
 
 def test_empty_inventory_is_not_written(tmp_path) -> None:
-    """An empty source result cannot look like a successful audit."""
+    """An empty source result cannot look like a successful collection."""
     with pytest.raises(SourceValidationError, match="empty"):
         write_scenario_inventory([], tmp_path / "inventory.csv")

@@ -1,23 +1,18 @@
 from __future__ import annotations
 
-import argparse
 import csv
-import sys
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
 from sr2025_to_tulipa.config import ScenarioSeed, load_scenario_registry
 from sr2025_to_tulipa.etm_client import (
-    EtmApiError,
     EtmClient,
     SavedScenario,
     resolve_featured_scenario,
 )
 
-
 class SourceValidationError(ValueError):
     """Report source metadata that differs from the registry."""
-
 
 @dataclass(frozen=True)
 class ScenarioInventoryRow:
@@ -33,7 +28,6 @@ class ScenarioInventoryRow:
     engine_base_url: str
     saved_updated_at: str
     scenario_updated_at: str
-
 
 def validate_saved_scenario(seed: ScenarioSeed, actual: SavedScenario) -> None:
     """Check that ETM metadata still matches the reviewed registry seed."""
@@ -57,7 +51,6 @@ def validate_saved_scenario(seed: ScenarioSeed, actual: SavedScenario) -> None:
             f"Saved scenario {seed.saved_scenario_id} differs in: {fields}."
         )
 
-
 def build_scenario_inventory(seeds: list[ScenarioSeed]) -> list[ScenarioInventoryRow]:
     """Resolve and validate every enabled scenario registry entry."""
     inventory: list[ScenarioInventoryRow] = []
@@ -78,7 +71,6 @@ def build_scenario_inventory(seeds: list[ScenarioSeed]) -> list[ScenarioInventor
 
     return inventory
 
-
 def _saved_scenario_from_public_data(
     seed: ScenarioSeed, scenario_id: int, scenario: dict[str, object]
 ) -> SavedScenario:
@@ -95,7 +87,6 @@ def _saved_scenario_from_public_data(
         scenario_updated_at=str(scenario["updated_at"]),
     )
 
-
 def write_scenario_inventory(
     rows: list[ScenarioInventoryRow], output_path: Path
 ) -> None:
@@ -107,7 +98,6 @@ def write_scenario_inventory(
         writer = csv.DictWriter(output_file, fieldnames=list(asdict(rows[0])))
         writer.writeheader()
         writer.writerows(asdict(row) for row in rows)
-
 
 def _inventory_row(
     seed: ScenarioSeed, actual: SavedScenario
@@ -126,30 +116,6 @@ def _inventory_row(
         scenario_updated_at=actual.scenario_updated_at,
     )
 
-
 def _normalise_version(version: str) -> str:
     """Make dotted and dashed ETM version tags comparable."""
     return version.strip().removeprefix("#").replace("-", ".")
-
-
-def main() -> None:
-    """Resolve the scenario registry and write its verified inventory."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument(
-        "--output",
-        type=Path,
-        default=Path("output/audit/scenario_inventory.csv"),
-    )
-    args = parser.parse_args()
-
-    try:
-        inventory = build_scenario_inventory(load_scenario_registry())
-        write_scenario_inventory(inventory, args.output)
-    except (EtmApiError, SourceValidationError) as error:
-        print(f"Error: {error}", file=sys.stderr)
-        raise SystemExit(1) from None
-    print(f"Verified {len(inventory)} scenarios: {args.output}")
-
-
-if __name__ == "__main__":
-    main()

@@ -67,8 +67,8 @@ availability profile after their capacity is allocated to `E-xxx` nodes.
 
 ETM scenario metadata, annual demand, hourly demand and must-run curves,
 generation parameters, methane supply quantities, and scenario fuel/CO2 prices
-are fetched through the ETM API or consumed from generated audit CSVs. They are
-therefore not stored in this source-data directory.
+are fetched by `sr2025-build` and written under the ignored `output/` tree.
+They are therefore not stored in this source-data directory.
 
 ## Provenance still required
 

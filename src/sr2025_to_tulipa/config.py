@@ -113,6 +113,9 @@ class MethaneSupplyAggregationRule:
     technology: str
     included: bool
     reason: str
+    annual_query_key: str
+    curve_query_keys: tuple[str, ...]
+    boundary: str
 
 
 @dataclass(frozen=True)
@@ -346,6 +349,9 @@ def load_methane_supply_aggregation(
             technology=row["technology"],
             included=row["included"].strip().lower() == "true",
             reason=row["reason"],
+            annual_query_key=row["annual_query_key"],
+            curve_query_keys=tuple(row["curve_query_key"].split("+")),
+            boundary=row["boundary"],
         )
         for row in rows
     ]
@@ -353,6 +359,10 @@ def load_methane_supply_aggregation(
         raise ValueError("The methane supply aggregation is empty.")
     if len({rule.route for rule in rules}) != len(rules):
         raise ValueError("Methane supply routes must be unique.")
+    allowed_boundaries = {"supply_route", "storage_withdrawal"}
+    invalid = {rule.boundary for rule in rules} - allowed_boundaries
+    if invalid:
+        raise ValueError(f"Unknown methane supply boundaries: {sorted(invalid)}")
     return rules
 
 

@@ -18,16 +18,8 @@ dev = [
 ]
 
 [project.scripts]
-sr2025-inventory = "sr2025_to_tulipa.source_validation:main"
-sr2025-demand-audit = "sr2025_to_tulipa.demand_audit:main"
-sr2025-profile-audit = "sr2025_to_tulipa.profile_audit:main"
-sr2025-carrier-profiles = "sr2025_to_tulipa.carrier_profiles:main"
-sr2025-capacity-aggregate = "sr2025_to_tulipa.capacity_aggregation:main"
-sr2025-electricity-regionalise = "sr2025_to_tulipa.electricity_regionalisation:main"
-sr2025-methane-supply-aggregate = "sr2025_to_tulipa.methane_supply_aggregation:main"
-sr2025-tulipa-assets = "sr2025_to_tulipa.tulipa_assets:main"
+sr2025-build = "sr2025_to_tulipa.pipeline:main"
 sr2025-tyndp-integrate = "sr2025_to_tulipa.tyndp_integration:main"
-sr2025-dashboard = "sr2025_to_tulipa.dashboard:main"
 
 [tool.pytest.ini_options]
 addopts = "-ra"

@@ -38,7 +38,7 @@ def test_approved_sources_are_summed_by_asset_group() -> None:
     assert excluded == []
 
 
-def test_links_and_small_generators_remain_auditable_exclusions() -> None:
+def test_links_and_small_generators_remain_explicit_exclusions() -> None:
     """Non-assets and capacities below the threshold are not silently lost."""
     grouped, excluded = aggregate_electricity_capacity(
         [_row("link", 1000.0), _row("diesel", 11.0)],

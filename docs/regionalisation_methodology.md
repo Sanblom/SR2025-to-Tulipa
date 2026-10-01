@@ -43,17 +43,10 @@ municipality-to-node mappings with a reviewed offshore cable and landing-point
 topology. The dispatch model will continue to represent offshore generation at
 landing `E-xxx` buses rather than adding dedicated offshore buses.
 
-## Audits
+## Validation
 
-`electricity_capacity_distribution_reconciliation.csv` checks that every
-national capacity is conserved after distribution. Municipality-weight and
-node-capacity outputs record the source method used for each asset group.
-
-`electricity_demand_distribution_reconciliation.csv` checks that each modeled
-national demand-group total is conserved when distributed to nodes.
-
-`electricity_demand_source_reconciliation.csv` is an independent source check.
-It compares municipality demand plus province-level industry demand from the
-SR2025 workbook with the modeled report-boundary total. It also reports demand
-from municipalities missing from the node mapping. Differences above 0.1 TWh
-are marked `review`; they are not hidden by normalization.
+Spatial weights are normalized per scenario, year, and demand or capacity
+group. Missing mappings, empty nonzero drivers, unknown technologies, and
+incomplete hourly profiles stop the build. Production output contains only the
+nodal demand and capacity tables consumed by the Tulipa exporter; conservation
+and source-boundary behavior are covered by the test suite.

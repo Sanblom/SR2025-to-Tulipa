@@ -1,5 +1,8 @@
+from pathlib import Path
+
 import pytest
 
+from sr2025_to_tulipa.config import load_scenario_registry
 from sr2025_to_tulipa.electricity_regionalisation import (
     Municipality,
     _demand_source_reconciliation,
@@ -142,3 +145,23 @@ def test_demand_source_reconciliation_excludes_industry_flexibility() -> None:
 
     assert reconciliation.workbook_total_mwh == 130.0
     assert reconciliation.status == "pass"
+
+
+def test_enabled_scenarios_select_every_regionalisation_workbook() -> None:
+    regional_dir = Path("source_data/regionalisation")
+    selected = {
+        regional_dir
+        / f"Scenario {scenario.scenario_name}"
+        / f"Scenario {scenario.scenario_name} {max(2030, scenario.year)}.xlsx"
+        for scenario in load_scenario_registry()
+        if scenario.enabled
+    }
+    available = {
+        path
+        for path in regional_dir.glob("Scenario */Scenario *.xlsx")
+        if not path.name.startswith("~$")
+    }
+
+    assert selected == available
+    assert (regional_dir / "Regionalisering vraag SR2025.xlsx").is_file()
+    assert (regional_dir / "municipality_node_overrides.csv").is_file()

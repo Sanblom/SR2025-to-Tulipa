@@ -38,7 +38,7 @@ def test_only_koersvaste_middenweg_has_a_2025_entry() -> None:
 
 
 def test_demand_catalogue_has_totals_and_sector_components() -> None:
-    """Each audited carrier has one total and eight sector queries."""
+    """Each carrier has one total and eight sector queries."""
     queries = load_gquery_catalogue()
 
     assert len(queries) == 27
@@ -108,7 +108,7 @@ def test_requested_demand_boundary_options_are_enabled_by_default() -> None:
 
 
 def test_model_options_can_be_validated_and_updated(tmp_path) -> None:
-    """Dashboard updates preserve option metadata and validate all values."""
+    """Option updates preserve metadata and validate all values."""
     path = tmp_path / "model_options.csv"
     rows = [
         ("flexible_heat_mode", "final_energy_demand", "final_energy_demand|heat_demand"),

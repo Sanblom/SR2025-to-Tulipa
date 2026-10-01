@@ -1,17 +1,13 @@
 from __future__ import annotations
 
-import argparse
 import csv
 from dataclasses import dataclass
 from pathlib import Path
 
 from sr2025_to_tulipa.config import (
     MethaneSupplyAggregationRule,
-    load_methane_supply_aggregation,
 )
-from sr2025_to_tulipa.demand_audit import write_rows
 from sr2025_to_tulipa.source_validation import SourceValidationError
-
 
 @dataclass(frozen=True)
 class MethaneSupplyRow:
@@ -23,7 +19,6 @@ class MethaneSupplyRow:
     annual_supply_twh: float
     observed_peak_mw: float
     installed_output_capacity_mw: float
-
 
 @dataclass(frozen=True)
 class MethaneSupplyGroupRow:
@@ -37,7 +32,6 @@ class MethaneSupplyGroupRow:
     installed_output_capacity_mw: float
     source_count: int
 
-
 @dataclass(frozen=True)
 class MethaneSupplyExclusionRow:
     """Record one methane route excluded from canonical supply."""
@@ -47,7 +41,6 @@ class MethaneSupplyExclusionRow:
     route: str
     annual_supply_twh: float
     reason: str
-
 
 def read_methane_supply_scan(path: Path) -> list[MethaneSupplyRow]:
     """Read native methane supply routes from the all-scenario audit."""
@@ -65,7 +58,6 @@ def read_methane_supply_scan(path: Path) -> list[MethaneSupplyRow]:
             )
             for row in csv.DictReader(input_file)
         ]
-
 
 def aggregate_methane_supply(
     rows: list[MethaneSupplyRow], rules: list[MethaneSupplyAggregationRule]
@@ -108,26 +100,3 @@ def aggregate_methane_supply(
         for key, values in sorted(groups.items())
     ]
     return grouped, exclusions
-
-
-def main() -> None:
-    """Group the all-scenario methane supply audit."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument(
-        "--input",
-        type=Path,
-        default=Path("output/audit/methane_supply_all_scenarios.csv"),
-    )
-    parser.add_argument("--output-dir", type=Path, default=Path("output/audit"))
-    args = parser.parse_args()
-
-    grouped, excluded = aggregate_methane_supply(
-        read_methane_supply_scan(args.input), load_methane_supply_aggregation()
-    )
-    write_rows(grouped, args.output_dir / "methane_supply_grouped.csv")
-    write_rows(excluded, args.output_dir / "methane_supply_excluded.csv")
-    print(f"Created {len(grouped)} grouped rows and {len(excluded)} exclusions.")
-
-
-if __name__ == "__main__":
-    main()

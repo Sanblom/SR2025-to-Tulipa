@@ -1,18 +1,13 @@
 from __future__ import annotations
 
-import argparse
 import csv
 from dataclasses import dataclass
 from pathlib import Path
 
 from sr2025_to_tulipa.config import (
     CapacityAggregationRule,
-    load_electricity_capacity_aggregation,
-    load_hydrogen_capacity_aggregation,
 )
-from sr2025_to_tulipa.demand_audit import write_rows
 from sr2025_to_tulipa.source_validation import SourceValidationError
-
 
 @dataclass(frozen=True)
 class CapacitySourceRow:
@@ -24,7 +19,6 @@ class CapacitySourceRow:
     query_key: str
     value: float
     unit: str
-
 
 @dataclass(frozen=True)
 class CapacityGroupRow:
@@ -38,7 +32,6 @@ class CapacityGroupRow:
     capacity_mw: float
     source_count: int
 
-
 @dataclass(frozen=True)
 class CapacityExclusionRow:
     """Record why one native capacity is not a production asset."""
@@ -48,7 +41,6 @@ class CapacityExclusionRow:
     query_key: str
     capacity_mw: float
     reason: str
-
 
 def read_capacity_scan(path: Path) -> list[CapacitySourceRow]:
     """Read nonzero electricity capacities from an audit scan."""
@@ -64,7 +56,6 @@ def read_capacity_scan(path: Path) -> list[CapacitySourceRow]:
             )
             for row in csv.DictReader(input_file)
         ]
-
 
 def read_hydrogen_capacity_scan(path: Path) -> list[CapacitySourceRow]:
     """Read nonzero hydrogen-output capacities from an audit scan."""
@@ -82,7 +73,6 @@ def read_hydrogen_capacity_scan(path: Path) -> list[CapacitySourceRow]:
         for row in rows
         if float(row["capacity_mw_hydrogen"]) > 0.0
     ]
-
 
 def aggregate_electricity_capacity(
     rows: list[CapacitySourceRow], rules: list[CapacityAggregationRule]
@@ -123,43 +113,3 @@ def aggregate_electricity_capacity(
         for key, values in sorted(groups.items())
     ]
     return grouped, exclusions
-
-
-def main() -> None:
-    """Group an all-scenario electricity or hydrogen capacity scan."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument(
-        "--carrier", choices=("electricity", "hydrogen"), default="electricity"
-    )
-    parser.add_argument(
-        "--input",
-        type=Path,
-        default=None,
-    )
-    parser.add_argument("--output-dir", type=Path, default=Path("output/audit"))
-    args = parser.parse_args()
-
-    if args.carrier == "electricity":
-        input_path = args.input or Path(
-            "output/audit/electricity_capacity_all_scenarios.csv"
-        )
-        rows = read_capacity_scan(input_path)
-        rules = load_electricity_capacity_aggregation()
-    else:
-        input_path = args.input or Path(
-            "output/audit/hydrogen_capacity_all_scenarios.csv"
-        )
-        rows = read_hydrogen_capacity_scan(input_path)
-        rules = load_hydrogen_capacity_aggregation()
-
-    grouped, excluded = aggregate_electricity_capacity(rows, rules)
-    write_rows(grouped, args.output_dir / f"{args.carrier}_capacity_grouped.csv")
-    if excluded:
-        write_rows(
-            excluded, args.output_dir / f"{args.carrier}_capacity_excluded.csv"
-        )
-    print(f"Created {len(grouped)} grouped rows and {len(excluded)} exclusions.")
-
-
-if __name__ == "__main__":
-    main()

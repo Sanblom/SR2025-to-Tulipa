@@ -1,20 +1,12 @@
 from __future__ import annotations
 
-import argparse
 from dataclasses import dataclass
-from pathlib import Path
 
-from sr2025_to_tulipa.config import (
-    ProfileQuerySpec,
-    load_profile_queries,
-    load_scenario_registry,
-)
-from sr2025_to_tulipa.demand_audit import write_rows
+from sr2025_to_tulipa.config import ProfileQuerySpec
 from sr2025_to_tulipa.etm_client import EtmClient, GQueryResponse
 from sr2025_to_tulipa.source_validation import (
     ScenarioInventoryRow,
     SourceValidationError,
-    build_scenario_inventory,
 )
 
 HOURS_PER_YEAR = 8760
@@ -73,10 +65,10 @@ class ProfileReconciliationRow:
     status: str
 
 
-def collect_profile_audit(
+def collect_profile_data(
     inventory: list[ScenarioInventoryRow], queries: list[ProfileQuerySpec]
 ) -> tuple[list[ProfileValueRow], list[SectorProfileRow], list[ProfileReconciliationRow]]:
-    """Collect profile curves and compare them with annual demand."""
+    """Collect, assemble, and validate configured ETM profile curves."""
     values: list[ProfileValueRow] = []
     sectors: list[SectorProfileRow] = []
     reconciliations: list[ProfileReconciliationRow] = []
@@ -169,7 +161,7 @@ def _profile_value_rows(
     queries: list[ProfileQuerySpec],
     response: GQueryResponse,
 ) -> list[ProfileValueRow]:
-    """Validate ETM curves and expand them to reviewable hourly rows."""
+    """Validate ETM curves and expand them to hourly rows."""
     rows: list[ProfileValueRow] = []
     for query in queries:
         value = response.values.get(query.query_key)
@@ -217,26 +209,3 @@ def _profile_value_rows(
                 )
             )
     return rows
-
-
-def main() -> None:
-    """Collect verified candidate profiles and write audit files."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument("--output-dir", type=Path, default=Path("output/audit"))
-    args = parser.parse_args()
-
-    inventory = build_scenario_inventory(load_scenario_registry())
-    values, sectors, reconciliations = collect_profile_audit(
-        inventory, load_profile_queries()
-    )
-    write_rows(values, args.output_dir / "profile_source_values.csv")
-    write_rows(sectors, args.output_dir / "profile_sector_values.csv")
-    write_rows(reconciliations, args.output_dir / "profile_reconciliation.csv")
-    print(
-        f"Collected {len(values)} source values, {len(sectors)} sector values, "
-        f"and {len(reconciliations)} reconciliations: {args.output_dir}"
-    )
-
-
-if __name__ == "__main__":
-    main()

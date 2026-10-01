@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import csv
 import math
 import re
@@ -324,7 +323,10 @@ def capacity_weights(
 
 
 def regionalise_demand(
-    input_path: Path, regional_dir: Path, output_dir: Path
+    input_path: Path,
+    regional_dir: Path,
+    output_dir: Path,
+    write_details: bool = True,
 ) -> None:
     """Distribute national hourly electricity groups through municipalities to nodes."""
     references: dict[tuple[str, int], RegionalReference] = {}
@@ -373,7 +375,10 @@ def regionalise_demand(
             )
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    _write_dataclasses(weight_rows, output_dir / "electricity_demand_municipality_weights.csv")
+    if write_details:
+        _write_dataclasses(
+            weight_rows, output_dir / "electricity_demand_municipality_weights.csv"
+        )
     with (output_dir / "electricity_demand_node_hourly.csv").open(
         "w", encoding="utf-8", newline=""
     ) as output_file:
@@ -393,6 +398,8 @@ def regionalise_demand(
                 }
                 for hour, value in enumerate(profile, start=1)
             )
+    if not write_details:
+        return
     municipality_allocations = [
         {
             **asdict(row),
@@ -436,7 +443,10 @@ def regionalise_demand(
 
 
 def regionalise_capacity(
-    input_path: Path, regional_dir: Path, output_dir: Path
+    input_path: Path,
+    regional_dir: Path,
+    output_dir: Path,
+    write_details: bool = True,
 ) -> None:
     """Distribute grouped national electricity capacity through municipalities to nodes."""
     references: dict[tuple[str, int], RegionalReference] = {}
@@ -489,11 +499,16 @@ def regionalise_capacity(
                 )
             )
     output_dir.mkdir(parents=True, exist_ok=True)
-    _write_dataclasses(all_weights, output_dir / "electricity_capacity_municipality_weights.csv")
+    if write_details:
+        _write_dataclasses(
+            all_weights, output_dir / "electricity_capacity_municipality_weights.csv"
+        )
     _write_dataclasses(output_rows, output_dir / "electricity_capacity_by_node.csv")
-    _write_dataclasses(
-        reconciliations, output_dir / "electricity_capacity_distribution_reconciliation.csv"
-    )
+    if write_details:
+        _write_dataclasses(
+            reconciliations,
+            output_dir / "electricity_capacity_distribution_reconciliation.csv",
+        )
 
 
 def _load_municipalities(master_path: Path) -> dict[str, Municipality]:
@@ -741,22 +756,3 @@ def _write_dicts(rows: list[dict[str, object]], path: Path) -> None:
         writer = csv.DictWriter(output_file, fieldnames=list(rows[0]))
         writer.writeheader()
         writer.writerows(rows)
-
-
-def main() -> None:
-    """Regionalise electricity demand profiles and grouped capacities to E-nodes."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument(
-        "--regional-dir", type=Path, default=Path("source_data/regionalisation")
-    )
-    parser.add_argument("--demand-input", type=Path, default=Path("output/profiles/demand_hourly.csv"))
-    parser.add_argument("--capacity-input", type=Path, default=Path("output/audit/electricity_capacity_grouped.csv"))
-    parser.add_argument("--output-dir", type=Path, default=Path("output/regionalisation"))
-    args = parser.parse_args()
-    regionalise_demand(args.demand_input, args.regional_dir, args.output_dir)
-    regionalise_capacity(args.capacity_input, args.regional_dir, args.output_dir)
-    print(f"Created electricity municipality and E-node distributions: {args.output_dir}")
-
-
-if __name__ == "__main__":
-    main()

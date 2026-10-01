@@ -14,6 +14,9 @@ def _rule(route: str, group: str, included: bool) -> MethaneSupplyAggregationRul
         technology="test",
         included=included,
         reason="test reason",
+        annual_query_key=f"{route}_annual",
+        curve_query_keys=(f"{route}_curve",),
+        boundary="supply_route",
     )
 
 
@@ -39,7 +42,7 @@ def test_renewable_routes_form_one_supply_group() -> None:
 
 
 def test_industry_transformation_remains_visible_as_excluded() -> None:
-    """Excluded transformation supply remains present in the audit."""
+    """Excluded transformation supply remains explicit."""
     grouped, excluded = aggregate_methane_supply(
         [_row("industry", 1.0, 100.0)],
         [_rule("industry", "industry_transformation", False)],

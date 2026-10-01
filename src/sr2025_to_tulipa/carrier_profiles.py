@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import csv
 import math
 from dataclasses import dataclass
@@ -11,25 +10,18 @@ from sr2025_to_tulipa.config import (
     GQuerySpec,
     ModelOptions,
     NaturalGasProfileParticipant,
-    load_gquery_catalogue,
-    load_demand_aggregation,
-    load_model_options,
-    load_natural_gas_profile_participants,
     load_profile_queries,
-    load_scenario_registry,
 )
-from sr2025_to_tulipa.demand_audit import write_rows
 from sr2025_to_tulipa.etm_client import CurveCsvResponse, EtmClient
-from sr2025_to_tulipa.profile_audit import (
+from sr2025_to_tulipa.profile_collection import (
     HOURS_PER_YEAR,
     MWH_TO_PJ,
     SectorProfileRow,
-    collect_profile_audit,
+    collect_profile_data,
 )
 from sr2025_to_tulipa.source_validation import (
     ScenarioInventoryRow,
     SourceValidationError,
-    build_scenario_inventory,
 )
 
 MATERIALITY_TWH = 0.1
@@ -50,7 +42,6 @@ HYDROGEN_CENTRAL_HEAT_PARTICIPANTS = (
     "energy_heat_burner_mt_hydrogen.input (MW)",
 )
 
-
 @dataclass(frozen=True)
 class CanonicalProfileRow:
     """Record one normalized hourly carrier-demand value."""
@@ -64,7 +55,6 @@ class CanonicalProfileRow:
     normalized_mw: float
     scale_factor: float
 
-
 @dataclass(frozen=True)
 class GroupedDemandProfileRow:
     """Record one hourly demand value after applying approved demand groups."""
@@ -76,7 +66,6 @@ class GroupedDemandProfileRow:
     hour: int
     raw_mw: float
     normalized_mw: float
-
 
 @dataclass(frozen=True)
 class CanonicalReconciliationRow:
@@ -92,7 +81,6 @@ class CanonicalReconciliationRow:
     difference_twh: float | None
     scale_factor: float | None
     status: str
-
 
 @dataclass(frozen=True)
 class ParticipantSummaryRow:
@@ -111,7 +99,6 @@ class ParticipantSummaryRow:
     retrieved_at: str
     response_checksum: str
 
-
 @dataclass(frozen=True)
 class ElectricityParticipantRule:
     """Classify one ETM merit-order electricity consumer."""
@@ -120,7 +107,6 @@ class ElectricityParticipantRule:
     category: str
     inclusion_mode: str
     reason: str
-
 
 def normalize_sector_profile(
     scenario_key: str,
@@ -189,7 +175,6 @@ def normalize_sector_profile(
     )
     return rows, reconciliation
 
-
 def apply_demand_grouping(
     profiles: list[CanonicalProfileRow], rules: list[DemandAggregationRule]
 ) -> list[GroupedDemandProfileRow]:
@@ -222,7 +207,6 @@ def apply_demand_grouping(
         for key, (raw_mw, normalized_mw) in sorted(grouped.items())
     ]
 
-
 def aggregate_hydrogen_profiles(
     inventory: list[ScenarioInventoryRow], options: ModelOptions
 ) -> tuple[list[CanonicalProfileRow], list[CanonicalReconciliationRow]]:
@@ -231,10 +215,12 @@ def aggregate_hydrogen_profiles(
         raise SourceValidationError(
             "Hydrogen useful-heat export is selected but not implemented yet."
         )
-    _, sector_rows, audit = collect_profile_audit(inventory, load_profile_queries())
+    _, sector_rows, annual_validation = collect_profile_data(
+        inventory, load_profile_queries()
+    )
     targets = {
         (row.scenario_key, row.year, row.sector): row.annual_demand_pj
-        for row in audit
+        for row in annual_validation
     }
     grouped: dict[tuple[str, int, str], list[float]] = {}
     for row in sector_rows:
@@ -276,7 +262,6 @@ def aggregate_hydrogen_profiles(
             profiles.extend(rows)
             reconciliations.append(reconciliation)
     return profiles, reconciliations
-
 
 def aggregate_electricity_profiles(
     inventory: list[ScenarioInventoryRow],
@@ -380,7 +365,6 @@ def aggregate_electricity_profiles(
             reconciliations.append(reconciliation)
     return profiles, reconciliations, summaries
 
-
 def _electricity_participant_values(
     curve: CurveCsvResponse, participant: str
 ) -> list[float]:
@@ -400,7 +384,6 @@ def _electricity_participant_values(
         demand - float(row[output] or 0.0)
         for demand, row in zip(values, curve.rows, strict=True)
     ]
-
 
 def _classify_electricity_participant(
     participant: str,
@@ -510,7 +493,6 @@ def _classify_electricity_participant(
         "Transformation output is not represented by a Tulipa conversion asset",
     )
 
-
 def _electricity_participant_included(
     rule: ElectricityParticipantRule, options: ModelOptions
 ) -> bool:
@@ -535,7 +517,6 @@ def _electricity_participant_included(
         )
     return option in {"final_energy_demand", "final_electricity_demand", "dsr"}
 
-
 def _electricity_target_sector(
     rule: ElectricityParticipantRule, options: ModelOptions
 ) -> str:
@@ -553,7 +534,6 @@ def _electricity_target_sector(
     if rule.category == "transformation":
         return "transformation"
     return rule.sector
-
 
 def aggregate_natural_gas_profiles(
     inventory: list[ScenarioInventoryRow],
@@ -668,7 +648,6 @@ def aggregate_natural_gas_profiles(
         reconciliations.append(lng_reconciliation)
     return profiles, reconciliations, summaries
 
-
 def _participant_included(
     rule: NaturalGasProfileParticipant, options: ModelOptions
 ) -> bool:
@@ -690,7 +669,6 @@ def _participant_included(
         )
     return option == "final_energy_demand"
 
-
 def _validate_gas_schema(
     curve: CurveCsvResponse, rules: dict[str, NaturalGasProfileParticipant]
 ) -> None:
@@ -708,14 +686,12 @@ def _validate_gas_schema(
             f"Network-gas curve returned {len(curve.rows)} hours."
         )
 
-
 def _annual_value(values: dict[str, dict[str, object]], query_key: str) -> float:
     """Read one validated annual PJ target from a gquery response."""
     value = values.get(query_key)
     if not isinstance(value, dict) or value.get("unit") != "PJ":
         raise SourceValidationError(f"{query_key} did not return a PJ value.")
     return float(value["future"])
-
 
 def _write_raw_curve(curve: CurveCsvResponse, path: Path) -> None:
     """Persist one untouched wide ETM curve table for source review."""
@@ -724,56 +700,3 @@ def _write_raw_curve(curve: CurveCsvResponse, path: Path) -> None:
         writer = csv.DictWriter(output_file, fieldnames=curve.fieldnames)
         writer.writeheader()
         writer.writerows(curve.rows)
-
-
-def main() -> None:
-    """Build canonical and grouped national carrier-demand profiles."""
-    parser = argparse.ArgumentParser(description=main.__doc__)
-    parser.add_argument("--output-dir", type=Path, default=Path("output/profiles"))
-    parser.add_argument("--raw-dir", type=Path, default=Path("output/raw/network_gas"))
-    args = parser.parse_args()
-
-    inventory = build_scenario_inventory(load_scenario_registry())
-    options = load_model_options()
-    electricity, electricity_reconciliation, electricity_participants = (
-        aggregate_electricity_profiles(
-            inventory,
-            options,
-            load_gquery_catalogue(),
-        )
-    )
-    hydrogen, hydrogen_reconciliation = aggregate_hydrogen_profiles(inventory, options)
-    methane, methane_reconciliation, participants = aggregate_natural_gas_profiles(
-        inventory,
-        options,
-        load_natural_gas_profile_participants(),
-        load_gquery_catalogue(),
-        args.raw_dir,
-    )
-    grouped_demand = apply_demand_grouping(
-        electricity + hydrogen + methane, load_demand_aggregation()
-    )
-    write_rows(electricity, args.output_dir / "electricity_hourly.csv")
-    write_rows(
-        electricity_reconciliation,
-        args.output_dir / "electricity_reconciliation.csv",
-    )
-    write_rows(
-        electricity_participants,
-        args.output_dir / "electricity_participants.csv",
-    )
-    write_rows(hydrogen, args.output_dir / "hydrogen_hourly.csv")
-    write_rows(hydrogen_reconciliation, args.output_dir / "hydrogen_reconciliation.csv")
-    write_rows(methane, args.output_dir / "methane_hourly.csv")
-    write_rows(methane_reconciliation, args.output_dir / "methane_reconciliation.csv")
-    write_rows(participants, args.output_dir / "methane_participants.csv")
-    write_rows(grouped_demand, args.output_dir / "demand_hourly.csv")
-    print(
-        f"Built {len(electricity)} electricity, {len(hydrogen)} hydrogen, "
-        f"and {len(methane)} methane canonical rows and "
-        f"{len(grouped_demand)} grouped demand rows: {args.output_dir}"
-    )
-
-
-if __name__ == "__main__":
-    main()
